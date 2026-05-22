@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SmartExam Gen — Nền tảng thi trực tuyến tiếng Anh vào lớp 6 THCS Thanh Xuân. Đề thi chuẩn, chấm điểm tự động, lời giải chi tiết." />
+  <title>SmartExam Gen · Thi Trực Tuyến</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ambient-bg">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">SmartExam Gen</span>
+          <span class="brand-sub">Emerald Edition</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg></span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item active" id="nav-exams">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="nav-label">Đề Thi Online</span>
+          <span class="nav-badge">Mới</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-history">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="nav-label">Lịch Sử Thi</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-rank">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="nav-label">Xếp Hạng</span>
+        </a>
+        <div class="nav-divider"></div>
+        <a href="index.html" class="nav-item" id="nav-gen">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="nav-label">Tạo Đề Mới</span>
+        </a>
+      </nav>
+      <div class="sidebar-quota">
+        <div class="quota-label"><span>Tiến độ ôn thi</span><span class="quota-count">7/20 đề</span></div>
+        <div class="quota-bar"><div class="quota-fill" style="width:35%"></div></div>
+        <p class="quota-hint">Hoàn thành tất cả đề để đạt Pro!</p>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar">HS</div>
+        <div class="user-info"><span class="user-name">Học Sinh</span><span class="user-role">Lớp 5 · Ôn thi lớp 6</span></div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <header class="topbar">
+        <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="breadcrumb">
+          <span>Đề Thi Online</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="bc-active">Tiếng Anh · THCS Thanh Xuân</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Thông báo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="notif-dot"></span></button>
+          <div class="user-chip"><div class="user-avatar-sm">HS</div><span>Học Sinh</span></div>
+        </div>
+      </header>
+
+      <div class="page-body" id="examListPage">
+        <!-- EXAM CATALOGUE -->
+        <div class="hero-banner">
+          <div class="hero-text">
+            <div class="hero-badge">🎓 THCS Thanh Xuân · Hà Nội</div>
+            <h1 class="hero-title">Đề Thi Tiếng Anh Vào Lớp 6</h1>
+            <p class="hero-sub">Bộ đề chuẩn cấu trúc thi tuyển sinh — tự động chấm điểm, lời giải chi tiết từng câu.</p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-pill"><span class="stat-num">3</span><span class="stat-label">Bộ đề</span></div>
+            <div class="stat-pill"><span class="stat-num">40</span><span class="stat-label">Câu/đề</span></div>
+            <div class="stat-pill"><span class="stat-num">40'</span><span class="stat-label">Thời gian</span></div>
+          </div>
+        </div>
+
+        <!-- EXAM CARDS -->
+        <div class="exam-catalogue">
+          <div class="catalogue-header">
+            <h2 class="section-title">📚 Chọn Đề Thi</h2>
+            <div class="filter-tabs">
+              <button class="filter-tab active">Tất cả</button>
+              <button class="filter-tab">Đề minh họa</button>
+              <button class="filter-tab">Đề thi thử</button>
+            </div>
+          </div>
+
+          <div class="catalogue-grid">
+            <!-- Exam 1 -->
+            <div class="cat-exam-card featured">
+              <div class="cat-card-badge">🔥 Phổ biến nhất</div>
+              <div class="cat-card-header">
+                <div class="cat-card-icon">📘</div>
+                <div class="cat-card-meta">
+                  <h3 class="cat-card-title">Đề Thi Thử Số 1</h3>
+                  <p class="cat-card-sub">Năm học 2024–2025 · Đề minh họa</p>
+                </div>
+              </div>
+              <div class="cat-card-info">
+                <div class="info-row"><span class="info-label">📝 Số câu:</span><span>40 câu trắc nghiệm</span></div>
+                <div class="info-row"><span class="info-label">⏱ Thời gian:</span><span>40 phút</span></div>
+                <div class="info-row"><span class="info-label">🎯 Mức độ:</span><span class="diff-badge medium">Trung bình</span></div>
+                <div class="info-row"><span class="info-label">📊 Nội dung:</span><span>Phát âm, Ngữ pháp, Đọc hiểu</span></div>
+              </div>
+              <div class="cat-card-stats">
+                <div class="mini-stat"><span class="ms-num">1,248</span><span class="ms-lbl">lượt thi</span></div>
+                <div class="mini-stat"><span class="ms-num">72%</span><span class="ms-lbl">đạt ≥8</span></div>
+                <div class="mini-stat"><span class="ms-num">8.2</span><span class="ms-lbl">điểm TB</span></div>
+              </div>
+              <button class="start-exam-btn" onclick="startExam(1)" id="start-btn-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                Bắt đầu thi ngay
+              </button>
+            </div>
+
+            <!-- Exam 2 -->
+            <div class="cat-exam-card">
+              <div class="cat-card-header">
+                <div class="cat-card-icon">📗</div>
+                <div class="cat-card-meta">
+                  <h3 class="cat-card-title">Đề Thi Thử Số 2</h3>
+                  <p class="cat-card-sub">Năm học 2024–2025 · Đề thi thử</p>
+                </div>
+              </div>
+              <div class="cat-card-info">
+                <div class="info-row"><span class="info-label">📝 Số câu:</span><span>40 câu trắc nghiệm</span></div>
+                <div class="info-row"><span class="info-label">⏱ Thời gian:</span><span>40 phút</span></div>
+                <div class="info-row"><span class="info-label">🎯 Mức độ:</span><span class="diff-badge hard">Nâng cao</span></div>
+                <div class="info-row"><span class="info-label">📊 Nội dung:</span><span>Từ vựng, Cấu trúc câu, Ngữ cảnh</span></div>
+              </div>
+              <div class="cat-card-stats">
+                <div class="mini-stat"><span class="ms-num">896</span><span class="ms-lbl">lượt thi</span></div>
+                <div class="mini-stat"><span class="ms-num">58%</span><span class="ms-lbl">đạt ≥8</span></div>
+                <div class="mini-stat"><span class="ms-num">7.6</span><span class="ms-lbl">điểm TB</span></div>
+              </div>
+              <button class="start-exam-btn secondary" onclick="startExam(2)" id="start-btn-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                Bắt đầu thi
+              </button>
+            </div>
+
+            <!-- Exam 3 -->
+            <div class="cat-exam-card">
+              <div class="cat-card-header">
+                <div class="cat-card-icon">📙</div>
+                <div class="cat-card-meta">
+                  <h3 class="cat-card-title">Đề Thi Thử Số 3</h3>
+                  <p class="cat-card-sub">Năm học 2023–2024 · Đề thi thử</p>
+                </div>
+              </div>
+              <div class="cat-card-info">
+                <div class="info-row"><span class="info-label">📝 Số câu:</span><span>40 câu trắc nghiệm</span></div>
+                <div class="info-row"><span class="info-label">⏱ Thời gian:</span><span>40 phút</span></div>
+                <div class="info-row"><span class="info-label">🎯 Mức độ:</span><span class="diff-badge easy">Cơ bản</span></div>
+                <div class="info-row"><span class="info-label">📊 Nội dung:</span><span>Ôn tập toàn diện Tiểu học</span></div>
+              </div>
+              <div class="cat-card-stats">
+                <div class="mini-stat"><span class="ms-num">2,103</span><span class="ms-lbl">lượt thi</span></div>
+                <div class="mini-stat"><span class="ms-num">84%</span><span class="ms-lbl">đạt ≥8</span></div>
+                <div class="mini-stat"><span class="ms-num">8.7</span><span class="ms-lbl">điểm TB</span></div>
+              </div>
+              <button class="start-exam-btn secondary" onclick="startExam(3)" id="start-btn-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                Bắt đầu thi
+              </button>
+            </div>
+          </div>
+
+          <!-- Knowledge summary -->
+          <div class="knowledge-box">
+            <h3 class="kb-title">📋 Tổng hợp kiến thức thi vào THCS Thanh Xuân</h3>
+            <div class="kb-grid">
+              <div class="kb-item"><div class="kb-icon">🔤</div><h4>Phát âm</h4><p>Âm /ə/, /ɪ/, /uː/ · Đuôi -ed, -s/es · Nguyên âm đôi</p></div>
+              <div class="kb-item"><div class="kb-icon">⚙️</div><h4>Ngữ pháp</h4><p>Thì hiện tại đơn, tiếp diễn · Câu hỏi Wh- · Giới từ · Mệnh đề quan hệ</p></div>
+              <div class="kb-item"><div class="kb-icon">📖</div><h4>Từ vựng</h4><p>Gia đình, Trường học, Thức ăn, Động vật, Thể thao, Nghề nghiệp</p></div>
+              <div class="kb-item"><div class="kb-icon">📄</div><h4>Đọc hiểu</h4><p>Đoạn văn 80–120 chữ · 5–8 câu hỏi · Điền từ vào chỗ trống</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ INTERFACE (hidden initially) -->
+      <div class="page-body" id="quizPage" style="display:none; padding:0;">
+        <div class="quiz-layout">
+          <!-- Quiz header bar -->
+          <div class="quiz-topbar">
+            <button class="quiz-back-btn" onclick="confirmBack()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Thoát
+            </button>
+            <div class="quiz-title-wrap">
+              <span class="quiz-exam-name" id="quizExamName">Đề Thi Thử Số 1</span>
+              <span class="quiz-sep">·</span>
+              <span class="quiz-subject">Tiếng Anh · THCS Thanh Xuân</span>
+            </div>
+            <div class="quiz-timer-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="quiz-timer" id="quizTimer">40:00</span>
+            </div>
+            <button class="quiz-submit-top-btn" onclick="submitExam()">Nộp bài</button>
+          </div>
+
+          <div class="quiz-body">
+            <!-- Question area -->
+            <div class="quiz-main">
+              <!-- Section label -->
+              <div class="section-label" id="sectionLabel">
+                <span class="sl-badge">Phần I</span>
+                <span class="sl-title" id="sectionTitle">PHÁT ÂM</span>
+                <span class="sl-desc" id="sectionDesc">Chọn từ có phần gạch chân phát âm khác</span>
+              </div>
+
+              <!-- Question card -->
+              <div class="question-card" id="questionCard">
+                <div class="q-header">
+                  <span class="q-number" id="qNumber">Câu 1</span>
+                  <button class="q-flag-btn" id="flagBtn" onclick="toggleFlag()" title="Đánh dấu câu này">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" id="flagIcon"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <span id="flagText">Đánh dấu</span>
+                  </button>
+                </div>
+                <div class="q-text" id="qText"></div>
+                <div class="q-options" id="qOptions"></div>
+              </div>
+
+              <!-- Nav controls -->
+              <div class="q-nav-controls">
+                <button class="q-nav-btn" id="prevBtn" onclick="navigate(-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  Câu trước
+                </button>
+                <div class="q-progress-info">
+                  <span id="qProgressText">1 / 40</span>
+                  <div class="q-mini-progress">
+                    <div class="q-mini-fill" id="qMiniFill"></div>
+                  </div>
+                </div>
+                <button class="q-nav-btn next" id="nextBtn" onclick="navigate(1)">
+                  Câu sau
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sidebar panel -->
+            <div class="quiz-sidebar">
+              <div class="qs-header">
+                <h3>Bảng câu hỏi</h3>
+                <div class="qs-stats">
+                  <span class="qs-stat answered"><span id="answeredCount">0</span> Đã làm</span>
+                  <span class="qs-stat flagged"><span id="flaggedCount">0</span> Đánh dấu</span>
+                </div>
+              </div>
+              <div class="qs-grid" id="qsGrid"></div>
+              <div class="qs-legend">
+                <div class="leg-item"><div class="leg-dot answered"></div>Đã trả lời</div>
+                <div class="leg-item"><div class="leg-dot current"></div>Đang làm</div>
+                <div class="leg-item"><div class="leg-dot flagged"></div>Đánh dấu</div>
+                <div class="leg-item"><div class="leg-dot unanswered"></div>Chưa làm</div>
+              </div>
+              <button class="submit-btn-sidebar" onclick="submitExam()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Nộp bài &amp; Chấm điểm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS PAGE (hidden initially) -->
+      <div class="page-body" id="resultsPage" style="display:none">
+        <div class="results-container">
+          <!-- Score banner -->
+          <div class="score-banner" id="scoreBanner">
+            <div class="score-circle-wrap">
+              <svg class="score-ring" viewBox="0 0 120 120">
+                <circle class="ring-bg" cx="60" cy="60" r="50" />
+                <circle class="ring-fill" cx="60" cy="60" r="50" id="ringFill" />
+              </svg>
+              <div class="score-inner">
+                <span class="score-number" id="scoreNumber">0</span>
+                <span class="score-denom">/10</span>
+              </div>
+            </div>
+            <div class="score-details">
+              <h2 class="score-title" id="scoreTitle">Xuất sắc! 🎉</h2>
+              <p class="score-sub" id="scoreSub">Bạn đã trả lời đúng 38/40 câu</p>
+              <div class="score-breakdown">
+                <div class="sb-item correct"><span id="correctCount">0</span><label>Đúng</label></div>
+                <div class="sb-item wrong"><span id="wrongCount">0</span><label>Sai</label></div>
+                <div class="sb-item skipped"><span id="skippedCount">0</span><label>Bỏ qua</label></div>
+                <div class="sb-item time-used"><span id="timeUsed">--:--</span><label>Thời gian</label></div>
+              </div>
+              <div class="score-actions">
+                <button class="score-btn primary" onclick="reviewAnswers()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  Xem lời giải chi tiết
+                </button>
+                <button class="score-btn secondary" onclick="retakeExam()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="23 4 23 10 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Thi lại
+                </button>
+                <button class="score-btn ghost" onclick="backToList()">Chọn đề khác</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section scores -->
+          <div class="section-scores" id="sectionScores"></div>
+
+          <!-- Detailed review -->
+          <div class="review-section" id="reviewSection" style="display:none">
+            <div class="review-header">
+              <h2 class="review-title">📝 Lời Giải Chi Tiết</h2>
+              <div class="review-filters">
+                <button class="rf-btn active" onclick="filterReview('all',this)">Tất cả</button>
+                <button class="rf-btn" onclick="filterReview('wrong',this)">❌ Sai</button>
+                <button class="rf-btn" onclick="filterReview('correct',this)">✅ Đúng</button>
+              </div>
+            </div>
+            <div class="review-list" id="reviewList"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Confirm dialog -->
+  <div class="modal-overlay" id="confirmModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-icon warn">⚠️</div>
+      <h2 class="modal-title" id="confirmTitle">Thoát khỏi bài thi?</h2>
+      <p class="modal-desc" id="confirmMsg">Tiến độ sẽ không được lưu. Bạn có chắc muốn thoát?</p>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeConfirm()">Tiếp tục thi</button>
+        <button class="modal-btn danger" onclick="executeConfirm()">Thoát</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="exam-data.js"></script>
+  <script src="quiz.js"></script>
+</body>
+</html>
