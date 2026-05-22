@@ -347,6 +347,10 @@
     </main>
   </div>
 
+      </div>
+    </div>
+  </div>
+
   <!-- Confirm dialog -->
   <div class="modal-overlay" id="confirmModal" style="display:none">
     <div class="modal-card">
@@ -363,6 +367,34 @@
   <!-- Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- Floating AI Tutor chat window -->
+  <div class="ai-tutor-chat-window" id="aiTutorChatWindow">
+    <div class="ai-chat-header">
+      <span class="ai-chat-owl">🦉</span>
+      <div class="ai-chat-title-wrap">
+        <span class="ai-chat-title">Cú Thông Thái 🦉</span>
+        <span class="ai-chat-subtitle">Gia sư Tiếng Anh của con</span>
+      </div>
+      <button class="ai-chat-close-btn" onclick="toggleAIChat(false)">&times;</button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+      <div class="ai-chat-msg tutor">
+        <span class="ai-chat-sender">Cú Thông Thái</span>
+        <div class="ai-chat-bubble">
+          Chào con! Thầy là **Cú Thông Thái** 🦉. Con cần thầy giải thích câu hỏi nào không? Hãy bấm nút **"Hỏi Trợ Lý AI"** 🦉 dưới mỗi câu ôn luyện hoặc nhắn tin trực tiếp cho thầy nhé!
+        </div>
+      </div>
+    </div>
+    <div class="ai-chat-input-wrap">
+      <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Hỏi thầy Cú về ngữ pháp..." onkeydown="if(event.key === 'Enter') sendAIChatMessage()" />
+      <button class="ai-chat-send-btn" onclick="sendAIChatMessage()" title="Gửi tin nhắn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="db-service.js"></script>
+  <script src="ai-service.js"></script>
   <script src="exam-data.js"></script>
   <script src="quiz.js"></script>
 </body>

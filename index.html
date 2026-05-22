@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Tải ApexCharts phục vụ vẽ biểu đồ năng lực -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
   <!-- Ambient background -->
@@ -27,7 +29,7 @@
         </div>
         <div class="brand-text">
           <span class="brand-name">SmartExam</span>
-          <span class="brand-sub">Emerald Edition</span>
+          <span class="brand-sub">Emerald AI Edition</span>
         </div>
       </div>
 
@@ -37,57 +39,65 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           <span class="nav-label">Thi Trực Tuyến</span>
-          <span class="nav-badge">Mới</span>
+          <span class="nav-badge" style="background:#10b981;">ĐỀ HOT</span>
         </a>
-        <a href="#" class="nav-item" id="nav-materials" onclick="setActiveNav(this)">
+        
+        <a href="#" class="nav-item active" id="nav-materials" onclick="switchView('materials')">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </span>
-          <span class="nav-label">My Materials</span>
+          <span class="nav-label">Tài liệu & Tạo đề AI</span>
         </a>
-        <a href="#" class="nav-item" id="nav-history" onclick="setActiveNav(this)">
+        
+        <a href="#" class="nav-item" id="nav-history" onclick="switchView('history')">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
-          <span class="nav-label">Exam History</span>
+          <span class="nav-label">Lịch sử làm bài</span>
         </a>
-        <a href="#" class="nav-item" id="nav-analytics" onclick="setActiveNav(this)">
+        
+        <a href="#" class="nav-item" id="nav-analytics" onclick="switchView('analytics')">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </span>
-          <span class="nav-label">Analytics</span>
+          <span class="nav-label">Biểu đồ năng lực</span>
+        </a>
+
+        <a href="#" class="nav-item" id="nav-mistakes" onclick="switchView('mistakes')">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-label">Sổ tay lỗi sai</span>
+          <span class="nav-badge" id="wrong-count-badge" style="background:#ef4444;color:#fff;">0</span>
         </a>
 
         <div class="nav-divider"></div>
 
-        <a href="#" class="nav-item" id="nav-settings" onclick="setActiveNav(this)">
+        <a href="#" class="nav-item" id="nav-settings" onclick="switchView('settings')">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2"/></path></svg>
           </span>
-          <span class="nav-label">Settings</span>
+          <span class="nav-label">Cấu hình hệ thống</span>
         </a>
       </nav>
 
       <div class="sidebar-quota">
         <div class="quota-label">
-          <span>Monthly Usage</span>
-          <span class="quota-count">7 / 20</span>
+          <span>Tiến trình cấp độ</span>
+          <span class="quota-count" id="quota-xp-display">0 / 500 XP</span>
         </div>
         <div class="quota-bar">
-          <div class="quota-fill" style="width: 35%"></div>
+          <div class="quota-fill" id="quota-xp-bar" style="width: 0%"></div>
         </div>
-        <p class="quota-hint">Upgrade for unlimited exams</p>
+        <p class="quota-hint" id="quota-level-hint">LV 1 · Chăm chỉ luyện thi mỗi ngày!</p>
       </div>
 
       <div class="sidebar-user">
-        <div class="user-avatar">NL</div>
+        <div class="user-avatar" id="sidebar-user-avatar">HS</div>
         <div class="user-info">
-          <span class="user-name">Nguyen Lan</span>
-          <span class="user-role">Teacher · Pro</span>
+          <span class="user-name" id="sidebar-user-name">Học sinh thông thái</span>
+          <span class="user-role" id="sidebar-user-role">Ôn thi Lớp 6 CLC</span>
         </div>
-        <button class="user-menu-btn" aria-label="User menu">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>
-        </button>
       </div>
     </aside>
 
@@ -101,236 +111,390 @@
 
         <div class="search-bar">
           <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <input type="text" id="search-input" placeholder="Search exams, materials…" autocomplete="off" />
+          <input type="text" id="search-input" placeholder="Tìm kiếm đề thi..." autocomplete="off" />
           <kbd class="search-kbd">⌘K</kbd>
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications" id="notif-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="notif-dot"></span>
-          </button>
-          <button class="icon-btn" aria-label="Help">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <!-- Chỉ số Streak & XP game hóa -->
+          <div class="gamified-stats">
+            <div class="stat-pill streak-pill" title="Chuỗi ngày học liên tục!">
+              🔥 <span id="streak-count-header">0</span> ngày
+            </div>
+            <div class="stat-pill xp-pill" title="Tổng điểm tích lũy (XP)">
+              ✨ <span id="xp-count-header">0</span> XP
+            </div>
+          </div>
+          
           <div class="user-chip">
-            <div class="user-avatar-sm">NL</div>
-            <span>Nguyen Lan</span>
+            <div class="user-avatar-sm" id="header-user-avatar">HS</div>
+            <span id="header-user-name">Học sinh</span>
           </div>
         </div>
       </header>
 
-      <!-- Page body -->
-      <div class="page-body">
-        <!-- Hero banner -->
-        <div class="hero-banner">
-          <div class="hero-text">
-            <h1 class="hero-title">AI Quiz Generator</h1>
-            <p class="hero-sub">Upload your documents and generate professional exams in seconds with the power of AI.</p>
+      <!-- ── Container điều phối các view ── -->
+      <div class="page-body" id="main-view-container">
+        
+        <!-- ================= VIEW 1: TÀI LIỆU & TẠO ĐỀ AI (MATERIALS & WIZARD) ================= -->
+        <div class="view-section" id="view-materials">
+          <!-- Hero banner -->
+          <div class="hero-banner">
+            <div class="hero-text">
+              <h1 class="hero-title" id="hero-title-text">Luyện thi Lớp 6 Chất Lượng Cao</h1>
+              <p class="hero-sub" id="hero-sub-text">Sinh đề thi tiếng Anh tự động bằng AI từ tài liệu hoặc hình ảnh bài tập chụp từ điện thoại.</p>
+            </div>
+            <div class="hero-stats">
+              <div class="stat-pill">
+                <span class="stat-num" id="stat-created-exams">12</span>
+                <span class="stat-label">Đề thi đã tạo</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-num" id="stat-total-score">8.5</span>
+                <span class="stat-label">Điểm trung bình</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-num" id="stat-total-streak">🔥 0</span>
+                <span class="stat-label">Chuỗi ngày học</span>
+              </div>
+            </div>
           </div>
-          <div class="hero-stats">
-            <div class="stat-pill">
-              <span class="stat-num">128</span>
-              <span class="stat-label">Exams Created</span>
-            </div>
-            <div class="stat-pill">
-              <span class="stat-num">2.4k</span>
-              <span class="stat-label">Questions Generated</span>
-            </div>
-            <div class="stat-pill">
-              <span class="stat-num">98%</span>
-              <span class="stat-label">Accuracy Score</span>
+
+          <!-- Content grid -->
+          <div class="content-grid">
+            <!-- LEFT: Wizard Steps -->
+            <section class="wizard-section">
+              <!-- Step 1 -->
+              <div class="wizard-card" id="step1-card">
+                <div class="step-header">
+                  <div class="step-badge active">
+                    <span>1</span>
+                  </div>
+                  <div class="step-meta">
+                    <h2 class="step-title">Tải lên Tài liệu / Ảnh bài tập</h2>
+                    <p class="step-desc">PDF, DOCX, TXT, PNG, JPG — tối đa 50MB</p>
+                  </div>
+                  <div class="step-status done" id="step1-status" style="display:none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Sẵn sàng
+                  </div>
+                </div>
+
+                <!-- Drop zone -->
+                <div class="drop-zone" id="dropZone" 
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="handleDrop(event)"
+                     onclick="document.getElementById('fileInput').click()">
+                  <div class="drop-inner">
+                    <div class="drop-icon-wrap">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <p class="drop-title">Kéo thả tài liệu ôn thi hoặc ảnh chụp bài tập vào đây</p>
+                    <p class="drop-sub">hoặc <span class="drop-link">chọn tệp từ máy tính</span></p>
+                    <div class="drop-formats">
+                      <span class="fmt-tag">PDF / DOCX</span>
+                      <span class="fmt-tag">ẢNH CHỤP VỞ</span>
+                      <span class="fmt-tag">TXT</span>
+                    </div>
+                  </div>
+                  <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" style="display:none" onchange="handleFileSelect(event)" multiple />
+                </div>
+
+                <!-- Uploaded files list -->
+                <div class="file-list" id="fileList"></div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="wizard-card" id="step2-card">
+                <div class="step-header">
+                  <div class="step-badge">
+                    <span>2</span>
+                  </div>
+                  <div class="step-meta">
+                    <h2 class="step-title">Cấu hình Đề thi AI</h2>
+                    <p class="step-desc">Tùy biến các tham số câu hỏi</p>
+                  </div>
+                </div>
+
+                <div class="config-grid">
+                  <!-- Questions count -->
+                  <div class="config-group">
+                    <label class="config-label" for="q-count">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Số lượng câu hỏi
+                      <span class="config-value" id="q-display">10</span>
+                    </label>
+                    <div class="slider-wrap">
+                      <input type="range" id="q-count" class="custom-slider" min="5" max="30" value="10" step="5" oninput="updateSlider('q-count','q-display')" />
+                      <div class="slider-marks">
+                        <span>5 câu</span><span>10 câu</span><span>20 câu</span><span>30 câu</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Difficulty -->
+                  <div class="config-group">
+                    <label class="config-label">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Độ khó đề thi
+                    </label>
+                    <div class="difficulty-selector" id="diffSelector">
+                      <button class="diff-btn" data-val="easy" onclick="selectDiff(this)" id="diff-easy">
+                        <span class="diff-dot easy"></span>Nhận biết
+                      </button>
+                      <button class="diff-btn active" data-val="medium" onclick="selectDiff(this)" id="diff-medium">
+                        <span class="diff-dot medium"></span>Thông hiểu
+                      </button>
+                      <button class="diff-btn" data-val="hard" onclick="selectDiff(this)" id="diff-hard">
+                        <span class="diff-dot hard"></span>Khó / Chuyên
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Question types -->
+                  <div class="config-group" style="display:none;">
+                    <label class="config-label">Dạng câu hỏi</label>
+                    <div class="type-chips">
+                      <label class="type-chip checked" id="chip-mc">
+                        <input type="checkbox" checked onchange="toggleChip('chip-mc',this)" />Trắc nghiệm 4 lựa chọn
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Timer -->
+                  <div class="config-group">
+                    <label class="config-label" for="timer-range">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                      Thời gian làm bài
+                      <span class="config-value" id="timer-display">15 phút</span>
+                    </label>
+                    <div class="slider-wrap">
+                      <input type="range" id="timer-range" class="custom-slider" min="10" max="60" value="15" step="5" oninput="updateTimerSlider()" />
+                      <div class="slider-marks">
+                        <span>10p</span><span>15p</span><span>30p</span><span>45p</span><span>60p</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Target School Info -->
+                  <div class="config-group">
+                    <label class="config-label" for="lang-select">
+                      🔑 Chế độ AI
+                    </label>
+                    <div id="ai-mode-status-text" style="font-size:0.8rem;color:var(--gray-600);margin-top:6px;font-style:italic;">
+                      Mặc định: Local Mode (Sinh đề giả lập). Hãy cấu hình Gemini Key trong mục Cài đặt để kích hoạt AI thực tế.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Generate button -->
+                <button class="generate-btn" id="generateBtn" onclick="startGeneration()">
+                  <span class="btn-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
+                  </span>
+                  <span class="btn-text">Bắt đầu Tạo đề với AI</span>
+                  <span class="btn-shimmer"></span>
+                </button>
+
+                <!-- Progress bar -->
+                <div class="gen-progress" id="genProgress" style="display:none">
+                  <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                  </div>
+                  <p class="progress-label" id="progressLabel">Đang phân tích cấu trúc tài liệu... 0%</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- RIGHT: Recent Exams -->
+            <aside class="exams-panel">
+              <div class="panel-header">
+                <h2 class="panel-title">Đề ôn thi CLC Sẵn Có</h2>
+              </div>
+
+              <div class="exam-list" id="examList">
+                <!-- Exam cards injected by JS -->
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- ================= VIEW 2: LỊCH SỬ LÀM BÀI (EXAM HISTORY) ================= -->
+        <div class="view-section" id="view-history" style="display:none">
+          <div class="section-header-card">
+            <h2 class="section-title">Lịch Sử Ôn Luyện</h2>
+            <p class="section-subtitle">Xem lại tất cả các đề thi con đã từng làm để theo dõi tiến trình.</p>
+          </div>
+          <div class="history-card">
+            <div class="table-responsive">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Ngày làm bài</th>
+                    <th>Tên đề thi</th>
+                    <th>Điểm số</th>
+                    <th>Thời gian làm</th>
+                    <th>Số câu đúng</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <!-- Các dòng lịch sử bốc từ localStorage/Supabase -->
+                  <tr>
+                    <td colspan="6" style="text-align:center;padding:40px;color:var(--gray-500);">Con chưa làm bài thi nào. Hãy bắt đầu ôn luyện nhé!</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <!-- Content grid -->
-        <div class="content-grid">
-          <!-- ── LEFT: Wizard Steps ── -->
-          <section class="wizard-section">
-            <!-- Step 1 -->
-            <div class="wizard-card" id="step1-card">
-              <div class="step-header">
-                <div class="step-badge active">
-                  <span>1</span>
-                </div>
-                <div class="step-meta">
-                  <h2 class="step-title">Upload Materials</h2>
-                  <p class="step-desc">PDF, DOCX, TXT — up to 50MB</p>
-                </div>
-                <div class="step-status done" id="step1-status">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Ready
-                </div>
-              </div>
+        <!-- ================= VIEW 3: BIỂU ĐỒ NĂNG LỰC (LEARNING ANALYTICS) ================= -->
+        <div class="view-section" id="view-analytics" style="display:none">
+          <div class="section-header-card">
+            <h2 class="section-title">Biểu Đồ Phân Tích Năng Lực AI</h2>
+            <p class="section-subtitle">Hệ thống AI tự động đánh giá thế mạnh và mảng yếu của con qua các đề thi.</p>
+          </div>
 
-              <!-- Drop zone -->
-              <div class="drop-zone" id="dropZone" 
-                   ondragover="handleDragOver(event)"
-                   ondragleave="handleDragLeave(event)"
-                   ondrop="handleDrop(event)"
-                   onclick="document.getElementById('fileInput').click()">
-                <div class="drop-inner">
-                  <div class="drop-icon-wrap">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </div>
-                  <p class="drop-title">Drag & Drop your files here</p>
-                  <p class="drop-sub">or <span class="drop-link">browse files</span> from your device</p>
-                  <div class="drop-formats">
-                    <span class="fmt-tag">PDF</span>
-                    <span class="fmt-tag">DOCX</span>
-                    <span class="fmt-tag">TXT</span>
-                    <span class="fmt-tag">PPTX</span>
-                  </div>
-                </div>
-                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.pptx" style="display:none" onchange="handleFileSelect(event)" multiple />
+          <!-- Khối thống kê tổng quan -->
+          <div class="analytics-stats-grid">
+            <div class="analytics-stat-card">
+              <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">📊</div>
+              <div class="stat-content">
+                <span class="stat-label">Tổng số bài luyện</span>
+                <h3 class="stat-val" id="an-total-tests">0</h3>
               </div>
-
-              <!-- Uploaded files list -->
-              <div class="file-list" id="fileList"></div>
             </div>
-
-            <!-- Step 2 -->
-            <div class="wizard-card" id="step2-card">
-              <div class="step-header">
-                <div class="step-badge">
-                  <span>2</span>
-                </div>
-                <div class="step-meta">
-                  <h2 class="step-title">Configure Exam</h2>
-                  <p class="step-desc">Customize your exam parameters</p>
-                </div>
+            <div class="analytics-stat-card">
+              <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">🎯</div>
+              <div class="stat-content">
+                <span class="stat-label">Điểm số trung bình</span>
+                <h3 class="stat-val" id="an-avg-score">0.0</h3>
               </div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-icon" style="background:rgba(59,130,246,0.1);color:#3b82f6;">⏱️</div>
+              <div class="stat-content">
+                <span class="stat-label">Thời gian làm trung bình</span>
+                <h3 class="stat-val" id="an-avg-time">0 phút</h3>
+              </div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-icon" style="background:rgba(239,68,68,0.1);color:#ef4444;">🔥</div>
+              <div class="stat-content">
+                <span class="stat-label">Chuỗi ngày học liên tục</span>
+                <h3 class="stat-val" id="an-streak">0 ngày</h3>
+              </div>
+            </div>
+          </div>
 
-              <div class="config-grid">
-                <!-- Questions count -->
-                <div class="config-group">
-                  <label class="config-label" for="q-count">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Number of Questions
-                    <span class="config-value" id="q-display">15</span>
-                  </label>
-                  <div class="slider-wrap">
-                    <input type="range" id="q-count" class="custom-slider" min="5" max="50" value="15" step="5" oninput="updateSlider('q-count','q-display')" />
-                    <div class="slider-marks">
-                      <span>5</span><span>15</span><span>25</span><span>35</span><span>50</span>
-                    </div>
-                  </div>
+          <!-- Khối biểu đồ chính -->
+          <div class="analytics-charts-grid">
+            <!-- Biểu đồ mạng nhện đánh giá 5 kỹ năng -->
+            <div class="chart-card">
+              <h3 class="chart-card-title">Đánh giá 5 kỹ năng thi CLC</h3>
+              <div id="radar-skills-chart"></div>
+            </div>
+            
+            <!-- Biểu đồ đường tiến trình điểm số -->
+            <div class="chart-card">
+              <h3 class="chart-card-title">Tiến trình điểm số qua các kỳ thi</h3>
+              <div id="line-score-chart"></div>
+            </div>
+          </div>
+
+          <!-- Chẩn đoán điểm mạnh/điểm yếu -->
+          <div class="diagnosis-grid">
+            <div class="diagnosis-card strength">
+              <h3 class="diagnosis-title">🌟 Điểm mạnh của con (Tỉ lệ đúng >= 75%)</h3>
+              <ul class="diagnosis-list" id="strength-list">
+                <li style="color:var(--gray-500);font-style:italic;">Hệ thống đang tích lũy thêm dữ liệu để phân tích...</li>
+              </ul>
+            </div>
+            <div class="diagnosis-card weakness">
+              <h3 class="diagnosis-title">⚠️ Mảng cần cải thiện (Tỉ lệ đúng < 60%)</h3>
+              <ul class="diagnosis-list" id="weakness-list">
+                <li style="color:var(--gray-500);font-style:italic;">Hệ thống đang tích lũy thêm dữ liệu để phân tích...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= VIEW 4: SỔ TAY LỖI SAI (MISTAKE BOOK) ================= -->
+        <div class="view-section" id="view-mistakes" style="display:none">
+          <div class="section-header-card">
+            <h2 class="section-title">📓 Sổ Tay Lỗi Sai (Mistake Book)</h2>
+            <p class="section-subtitle">Tự động gom các câu hỏi con làm sai trong các đề thi. Hãy làm lại và hỏi AI Tutor để biến lỗi sai thành điểm 10!</p>
+          </div>
+
+          <div class="mistake-stats-bar">
+            <span>Tổng số câu đang làm sai: <strong id="wrong-count-text" style="color:#ef4444;">0</strong> câu</span>
+            <button class="exam-btn exam-btn-primary" onclick="clearAllMistakes()" style="font-size:0.8rem;padding:6px 12px;">Xóa sạch sổ tay</button>
+          </div>
+
+          <div class="mistakes-container" id="mistakes-list">
+            <!-- Thẻ câu hỏi sai sẽ tiêm bằng JS -->
+            <div style="text-align:center;padding:60px;color:var(--gray-500);background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.02)">
+              🤖 Sổ tay trống! Con làm bài rất tốt, chưa bị sai câu nào trong lịch sử luyện thi. Thật xuất sắc!
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= VIEW 5: CẤU HÌNH HỆ THỐNG (SETTINGS) ================= -->
+        <div class="view-section" id="view-settings" style="display:none">
+          <div class="section-header-card">
+            <h2 class="section-title">⚙️ Cấu Hình Hệ Thống</h2>
+            <p class="section-subtitle">Cấu hình khóa API Google Gemini để mở khóa trí tuệ nhân tạo toàn năng sinh đề và gia sư.</p>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Khối thông tin cá nhân học sinh -->
+            <div class="settings-card">
+              <h3 class="settings-title">Cá nhân hóa Học sinh</h3>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label" for="set-student-name">Tên học sinh</label>
+                  <input type="text" id="set-student-name" class="form-input" placeholder="Ví dụ: Nguyễn Lan" />
                 </div>
-
-                <!-- Difficulty -->
-                <div class="config-group">
-                  <label class="config-label">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Difficulty Level
-                  </label>
-                  <div class="difficulty-selector" id="diffSelector">
-                    <button class="diff-btn" data-val="easy" onclick="selectDiff(this)" id="diff-easy">
-                      <span class="diff-dot easy"></span>Easy
-                    </button>
-                    <button class="diff-btn active" data-val="medium" onclick="selectDiff(this)" id="diff-medium">
-                      <span class="diff-dot medium"></span>Medium
-                    </button>
-                    <button class="diff-btn" data-val="hard" onclick="selectDiff(this)" id="diff-hard">
-                      <span class="diff-dot hard"></span>Hard
-                    </button>
-                    <button class="diff-btn" data-val="mixed" onclick="selectDiff(this)" id="diff-mixed">
-                      <span class="diff-dot mixed"></span>Mixed
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Question types -->
-                <div class="config-group">
-                  <label class="config-label">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Question Types
-                  </label>
-                  <div class="type-chips">
-                    <label class="type-chip checked" id="chip-mc">
-                      <input type="checkbox" checked onchange="toggleChip('chip-mc',this)" />
-                      Multiple Choice
-                    </label>
-                    <label class="type-chip" id="chip-tf">
-                      <input type="checkbox" onchange="toggleChip('chip-tf',this)" />
-                      True / False
-                    </label>
-                    <label class="type-chip" id="chip-sa">
-                      <input type="checkbox" onchange="toggleChip('chip-sa',this)" />
-                      Short Answer
-                    </label>
-                    <label class="type-chip" id="chip-fill">
-                      <input type="checkbox" onchange="toggleChip('chip-fill',this)" />
-                      Fill in Blank
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Timer -->
-                <div class="config-group">
-                  <label class="config-label" for="timer-range">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    Exam Timer
-                    <span class="config-value" id="timer-display">30 min</span>
-                  </label>
-                  <div class="slider-wrap">
-                    <input type="range" id="timer-range" class="custom-slider" min="10" max="180" value="30" step="10" oninput="updateTimerSlider()" />
-                    <div class="slider-marks">
-                      <span>10m</span><span>30m</span><span>60m</span><span>90m</span><span>3h</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Language -->
-                <div class="config-group">
-                  <label class="config-label" for="lang-select">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" stroke="currentColor" stroke-width="2"/></svg>
-                    Output Language
-                  </label>
-                  <select id="lang-select" class="custom-select">
-                    <option value="en">🇬🇧 English</option>
-                    <option value="vi" selected>🇻🇳 Tiếng Việt</option>
-                    <option value="fr">🇫🇷 Français</option>
-                    <option value="de">🇩🇪 Deutsch</option>
-                    <option value="ja">🇯🇵 日本語</option>
+                <div class="form-group">
+                  <label class="form-label" for="set-target-school">Trường mục tiêu tuyển sinh lớp 6</label>
+                  <select id="set-target-school" class="form-select">
+                    <option value="THCS Thanh Xuân">THCS Thanh Xuân (Chất lượng cao)</option>
+                    <option value="THCS Cầu Giấy">THCS Cầu Giấy (Chất lượng cao)</option>
+                    <option value="THCS Nam Từ Liêm">THCS Nam Từ Liêm (Chất lượng cao)</option>
+                    <option value="THCS Chuyên Hà Nội - Amsterdam">THCS Chuyên Hà Nội - Amsterdam</option>
+                    <option value="THCS Nguyễn Tất Thành">THCS THSP Nguyễn Tất Thành</option>
+                    <option value="THCS Đoàn Thị Điểm">THCS Đoàn Thị Điểm</option>
+                    <option value="THCS Marie Curie">THCS Marie Curie</option>
+                    <option value="THCS Lương Thế Vinh">THCS Lương Thế Vinh</option>
                   </select>
                 </div>
+                <button class="exam-btn exam-btn-primary" onclick="savePersonalSettings()" style="width:100%;margin-top:12px;">Cập nhật thông tin cá nhân</button>
               </div>
+            </div>
 
-              <!-- Generate button -->
-              <button class="generate-btn" id="generateBtn" onclick="startGeneration()">
-                <span class="btn-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
-                </span>
-                <span class="btn-text">Generate Exam with AI</span>
-                <span class="btn-shimmer"></span>
-              </button>
-
-              <!-- Progress bar (hidden by default) -->
-              <div class="gen-progress" id="genProgress" style="display:none">
-                <div class="progress-bar">
-                  <div class="progress-fill" id="progressFill"></div>
+            <!-- Khối cấu hình khóa AI Gemini -->
+            <div class="settings-card">
+              <h3 class="settings-title">Khóa AI Google Gemini API</h3>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label" for="set-gemini-key">Gemini API Key (Miễn phí)</label>
+                  <input type="password" id="set-gemini-key" class="form-input" placeholder="Dán khóa AI AIzaSy... của bạn vào đây" />
                 </div>
-                <p class="progress-label" id="progressLabel">Analyzing document… 0%</p>
+                <p style="font-size:0.75rem;color:var(--gray-600);line-height:1.4;">
+                  💡 **Làm thế nào để lấy khóa API miễn phí?**<br/>
+                  1. Học sinh/phụ huynh truy cập cổng **[Google AI Studio](https://aistudio.google.com/)**.<br/>
+                  2. Đăng nhập bằng tài khoản Gmail thông thường.<br/>
+                  3. Bấm nút **"Get API Key"** -> Tạo khóa mới (Create API Key) rồi sao chép dán vào đây.<br/>
+                  *Mọi cuộc gọi AI đều chạy trực tiếp từ trình duyệt của con, khóa được lưu an toàn cục bộ.*
+                </p>
+                <button class="exam-btn exam-btn-primary" onclick="saveAIApiSettings()" style="width:100%;margin-top:12px;background:#10b981;">Lưu khóa API Gemini</button>
               </div>
             </div>
-          </section>
-
-          <!-- ── RIGHT: Recent Exams ── -->
-          <aside class="exams-panel">
-            <div class="panel-header">
-              <h2 class="panel-title">Recently Generated</h2>
-              <button class="panel-action" onclick="">
-                View All
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-            </div>
-
-            <div class="exam-list" id="examList">
-              <!-- Exam cards injected by JS -->
-            </div>
-          </aside>
+          </div>
         </div>
+
       </div>
     </main>
   </div>
@@ -344,18 +508,49 @@
       <div class="modal-icon">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <h2 class="modal-title">Exam Ready! 🎉</h2>
-      <p class="modal-desc" id="modalDesc">Your exam has been generated successfully.</p>
+      <h2 class="modal-title">Đề Thi AI Đã Sẵn Sàng! 🎉</h2>
+      <p class="modal-desc" id="modalDesc">Bộ đề ôn tập 10 câu trắc nghiệm tiếng Anh đã được sinh ra thành công.</p>
       <div class="modal-actions">
-        <button class="modal-btn secondary" onclick="closeModal()">Close</button>
+        <button class="modal-btn secondary" onclick="closeModal()">Đóng lại</button>
         <button class="modal-btn primary" onclick="startQuiz()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
-          Start Quiz
+          Bắt đầu thi ngay
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Floating AI Tutor chat window -->
+  <div class="ai-tutor-chat-window" id="aiTutorChatWindow">
+    <div class="ai-chat-header">
+      <span class="ai-chat-owl">🦉</span>
+      <div class="ai-chat-title-wrap">
+        <span class="ai-chat-title">Cú Thông Thái 🦉</span>
+        <span class="ai-chat-subtitle">Gia sư Tiếng Anh của con</span>
+      </div>
+      <button class="ai-chat-close-btn" onclick="toggleAIChat(false)">&times;</button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+      <div class="ai-chat-msg tutor">
+        <span class="ai-chat-sender">Cú Thông Thái</span>
+        <div class="ai-chat-bubble">
+          Chào con! 🦉 Thầy Cú thông thái đây. Con có muốn hỏi thầy về các câu hỏi trong Sổ tay lỗi sai không? Hãy bấm nút **"Hỏi Thầy Cú 🦉"** ở từng câu hoặc nhắn tin trò chuyện với thầy nhé!
+        </div>
+      </div>
+    </div>
+    <div class="ai-chat-input-wrap">
+      <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Hỏi thầy Cú về ngữ pháp..." onkeydown="if(event.key === 'Enter') sendAIChatMessage()" />
+      <button class="ai-chat-send-btn" onclick="sendAIChatMessage()" title="Gửi tin nhắn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Nhập các script dịch vụ cốt lõi -->
+  <script src="db-service.js"></script>
+  <script src="ai-service.js"></script>
+  <script src="exam-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
+

@@ -248,6 +248,9 @@ function processResults() {
     sectionResults[s.id] = { name: s.name, correct: 0, total: 0 };
   });
 
+  const answersList = [];
+  const letters = ['A', 'B', 'C', 'D'];
+
   questions.forEach((q, i) => {
     // Find section
     let secId = state.exam.sections[state.exam.sections.length - 1].id;
@@ -256,14 +259,38 @@ function processResults() {
     }
     sectionResults[secId].total++;
 
-    if (state.answers[i] === undefined) {
+    const userAns = state.answers[i];
+    const isCorrect = userAns === q.answer;
+
+    if (userAns === undefined) {
       skipped++;
-    } else if (state.answers[i] === q.answer) {
+    } else if (isCorrect) {
       correct++;
       sectionResults[secId].correct++;
     } else {
       wrong++;
     }
+
+    // Determine category based on section id
+    let category = 'grammar_vocabulary';
+    if (secId === 'phonetics') category = 'phonetics';
+    else if (secId === 'grammar' || secId === 'vocabulary') category = 'grammar_vocabulary';
+    else if (secId === 'reading' || secId === 'reading_comprehension') category = 'reading_comprehension';
+    else if (secId === 'writing' || secId === 'error_identification') category = 'error_identification';
+    else if (secId === 'sentence_transformation') category = 'sentence_transformation';
+
+    const questionId = q.id || `${state.examId}_q_${i}`;
+    answersList.push({
+      questionId: questionId,
+      questionText: q.text,
+      options: q.options,
+      correctAnswer: letters[q.answer],
+      explanation: q.explanation || 'Không có giải thích',
+      topic: q.topic || 'General',
+      category: category,
+      selected: userAns !== undefined ? letters[userAns] : 'Chưa chọn',
+      isCorrect: isCorrect
+    });
   });
 
   // Score out of 10
@@ -274,6 +301,34 @@ function processResults() {
   const timeUsed = state.totalTime - state.timeLeft;
   const tm = Math.floor(timeUsed / 60), ts = timeUsed % 60;
   const timeStr = `${String(tm).padStart(2,'0')}:${String(ts).padStart(2,'0')}`;
+
+  // Save attempt using DbService if registered globally
+  if (window.DbService) {
+    const attemptData = {
+      examId: state.examId,
+      examTitle: state.exam.title,
+      score: score,
+      timeSpent: timeUsed,
+      totalQuestions: questions.length,
+      correctCount: correct,
+      answers: answersList
+    };
+    
+    const result = window.DbService.saveAttempt(attemptData);
+    if (result && result.success) {
+      let toastMsg = `Thành tích đã được lưu! Nhận được +${result.xpResult.xpEarned} XP 🌟.`;
+      if (result.streakResult && result.streakResult.count > 0) {
+        toastMsg += ` Chuỗi học tập: ${result.streakResult.count} ngày liên tục 🔥!`;
+      }
+      showToast(toastMsg, 'success');
+      
+      if (result.xpResult.leveledUp) {
+        setTimeout(() => {
+          showToast(`🎉 CHÚC MỪNG! Bạn đã thăng cấp lên Cấp ${result.xpResult.newLevel}! Thầy Cú Thông Thái rất tự hào về con! 🦉✨`, 'success');
+        }, 1200);
+      }
+    }
+  }
 
   // Show results page
   document.getElementById('quizPage').style.display = 'none';
@@ -403,7 +458,15 @@ function renderReviewList(filter) {
         Bạn chọn: <b>${userAns !== undefined ? letters[userAns] + '. ' + q.options[userAns] : 'Không trả lời'}</b>
         &nbsp;|&nbsp; Đáp án đúng: <b class="rev-correct-text">${letters[q.answer]}. ${q.options[q.answer]}</b>
       </div>
-      <div class="rev-explanation"><div class="rev-exp-label">💡 Giải thích:</div>${q.explanation}</div>
+      <div class="rev-explanation">
+        <div class="rev-exp-label">💡 Giải thích:</div>
+        <p>${q.explanation}</p>
+        <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+          <button class="ask-ai-tutor-btn" onclick="initAIChatForQuestion(${i})" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--em-500); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(16,185,129,0.2);">
+            <span>Hỏi Trợ Lý AI</span> 🦉
+          </button>
+        </div>
+      </div>
     `;
     list.appendChild(card);
   });
@@ -459,7 +522,269 @@ document.querySelectorAll('.filter-tab').forEach(btn => {
   });
 });
 
+// ── AI Tutor Chatbot Panel Logic ──────────────────────
+let aiChatState = {
+  questionText: '',
+  options: [],
+  selectedAnswer: '',
+  correctAnswer: '',
+  history: []
+};
+
+function toggleAIChat(isOpen) {
+  const win = document.getElementById('aiTutorChatWindow');
+  if (win) {
+    if (isOpen) win.classList.add('open');
+    else win.classList.remove('open');
+  }
+}
+
+function initAIChatForQuestion(idx) {
+  const q = state.exam.questions[idx];
+  const letters = ['A', 'B', 'C', 'D'];
+  const userAnsIdx = state.answers[idx];
+  const userAns = userAnsIdx !== undefined ? letters[userAnsIdx] : 'Chưa chọn';
+  const correctAns = letters[q.answer];
+  
+  initAIChatWithContext(q.text, q.options, userAns, correctAns);
+}
+
+function initAIChatWithContext(qText, options, userAns, correctAns) {
+  aiChatState.questionText = qText;
+  aiChatState.options = options;
+  aiChatState.selectedAnswer = userAns;
+  aiChatState.correctAnswer = correctAns;
+  aiChatState.history = [];
+  
+  toggleAIChat(true);
+  
+  // Clean question tags from text for cleaner chat prompt
+  const cleanQText = qText.replace(/<[^>]*>/g, '');
+  
+  // Reset chat body to typing state
+  const body = document.getElementById('aiChatBody');
+  body.innerHTML = `
+    <div class="ai-chat-msg tutor">
+      <span class="ai-chat-sender">Cú Thông Thái</span>
+      <div class="ai-chat-bubble">
+        Chào con! 🦉 Thầy Cú đang đọc câu hỏi của con rồi. Hãy đợi thầy một chút để thầy giải thích thật chi tiết và dễ hiểu cho con nhé! ✨
+      </div>
+    </div>
+    <div class="ai-chat-msg tutor ai-chat-typing" id="aiTypingIndicator">
+      <span class="ai-chat-sender">Cú Thông Thái</span>
+      <div class="ai-chat-bubble">
+        <span>.</span><span>.</span><span>.</span>
+      </div>
+    </div>
+  `;
+  body.scrollTop = body.scrollHeight;
+
+  // Trigger automatic AI call for initial explanation
+  setTimeout(async () => {
+    try {
+      const explanation = await window.AiService.askAITutor(
+        cleanQText, 
+        options, 
+        userAns, 
+        correctAns, 
+        [], 
+        ''
+      );
+      
+      // Remove typing indicator
+      const typing = document.getElementById('aiTypingIndicator');
+      if (typing) typing.remove();
+      
+      // Add explanation message
+      appendChatBubble('tutor', explanation);
+      
+      // Push to state history
+      aiChatState.history.push({ role: 'model', message: explanation });
+    } catch (err) {
+      console.error(err);
+      const typing = document.getElementById('aiTypingIndicator');
+      if (typing) typing.remove();
+      appendChatBubble('tutor', 'Ối, thầy bị lạc đường mất tiêu rồi. Con hãy kiểm tra lại kết nối mạng hoặc thử hỏi thầy lại nhé! 🦉❤️');
+    }
+  }, 400);
+}
+
+function appendChatBubble(role, text) {
+  const body = document.getElementById('aiChatBody');
+  const div = document.createElement('div');
+  div.className = `ai-chat-msg ${role === 'tutor' ? 'tutor' : 'user'}`;
+  
+  // Format simple markdown structures to HTML
+  const formattedText = parseChatMarkdown(text);
+  
+  div.innerHTML = `
+    <span class="ai-chat-sender">${role === 'tutor' ? 'Cú Thông Thái' : 'Học sinh'}</span>
+    <div class="ai-chat-bubble">${formattedText}</div>
+  `;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+
+function parseChatMarkdown(text) {
+  if (!text) return '';
+  let html = text;
+  
+  // Escape HTML to prevent code injection, except for safe tags we specify later
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
+  // Bold text
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Italic text
+  html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  
+  // Code snippets
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Bullet lists
+  html = html.replace(/^\s*-\s+(.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.+<\/li>)/s, '<ul>$1</ul>');
+  
+  // Carriage returns to breaks
+  html = html.replace(/\n/g, '<br>');
+  
+  return html;
+}
+
+async function sendAIChatMessage() {
+  const input = document.getElementById('aiChatInput');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  
+  input.value = '';
+  
+  // Append user bubble
+  appendChatBubble('user', text);
+  aiChatState.history.push({ role: 'user', message: text });
+  
+  // Append typing indicator
+  const body = document.getElementById('aiChatBody');
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'ai-chat-msg tutor ai-chat-typing';
+  typingDiv.id = 'aiTypingIndicator';
+  typingDiv.innerHTML = `
+    <span class="ai-chat-sender">Cú Thông Thái</span>
+    <div class="ai-chat-bubble">
+      <span>.</span><span>.</span><span>.</span>
+    </div>
+  `;
+  body.appendChild(typingDiv);
+  body.scrollTop = body.scrollHeight;
+  
+  // Call API
+  try {
+    const cleanQText = aiChatState.questionText.replace(/<[^>]*>/g, '');
+    const response = await window.AiService.askAITutor(
+      cleanQText,
+      aiChatState.options,
+      aiChatState.selectedAnswer,
+      aiChatState.correctAnswer,
+      aiChatState.history.slice(0, -1), // Send previous history up to current question
+      text
+    );
+    
+    const typing = document.getElementById('aiTypingIndicator');
+    if (typing) typing.remove();
+    
+    appendChatBubble('tutor', response);
+    aiChatState.history.push({ role: 'model', message: response });
+  } catch (err) {
+    console.error(err);
+    const typing = document.getElementById('aiTypingIndicator');
+    if (typing) typing.remove();
+    appendChatBubble('tutor', 'Ối, thầy bị lạc đường mất tiêu rồi. Con hãy nhắn lại nhé! 🦉❤️');
+  }
+}
+
+// ── Dynamic exam catalogue builder ───────────────────
+function renderExamCatalogue() {
+  const grid = document.querySelector('.catalogue-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  Object.keys(window.EXAM_DATABASE).forEach(id => {
+    const exam = window.EXAM_DATABASE[id];
+    const isCustom = id.toString().startsWith('custom');
+    
+    // Calculate attempts and average score if DbService exists
+    let attemptsCount = 0;
+    let avgScore = '--';
+    if (window.DbService) {
+      const attempts = window.DbService.getAttempts().filter(a => a.examId == id);
+      attemptsCount = attempts.length;
+      if (attemptsCount > 0) {
+        const sum = attempts.reduce((acc, a) => acc + Number(a.score), 0);
+        avgScore = (sum / attemptsCount).toFixed(1);
+      }
+    }
+    
+    const diffLabel = exam.questions[0]?.difficulty || 'medium';
+    const diffClass = diffLabel === 'easy' ? 'easy' : diffLabel === 'hard' ? 'hard' : 'medium';
+    const diffText = diffLabel === 'easy' ? 'Dễ' : diffLabel === 'hard' ? 'Khó' : 'Trung bình';
+    
+    const card = document.createElement('div');
+    card.className = `cat-exam-card ${isCustom ? 'featured' : id == 1 ? 'featured' : ''}`;
+    if (isCustom) card.style.border = '2px dashed var(--em-400)';
+    
+    card.innerHTML = `
+      ${isCustom ? '<div class="cat-card-badge" style="background:#10b981">✨ Sinh bởi AI</div>' : id == 1 ? '<div class="cat-card-badge">🔥 Phổ biến nhất</div>' : ''}
+      <div class="cat-card-header">
+        <div class="cat-card-icon">${isCustom ? '🤖' : id == 1 ? '📘' : id == 2 ? '📗' : '📙'}</div>
+        <div class="cat-card-meta">
+          <h3 class="cat-card-title">${exam.title}</h3>
+          <p class="cat-card-sub">${exam.subtitle || 'Đề thi trắc nghiệm tiếng Anh'}</p>
+        </div>
+      </div>
+      <div class="cat-card-info">
+        <div class="info-row"><span class="info-label">📝 Số câu:</span><span>${exam.questions.length} câu trắc nghiệm</span></div>
+        <div class="info-row"><span class="info-label">⏱ Thời gian:</span><span>${exam.duration} phút</span></div>
+        <div class="info-row"><span class="info-label">🎯 Mức độ:</span><span class="diff-badge ${diffClass}">${diffText}</span></div>
+        <div class="info-row"><span class="info-label">📊 Chuyên đề:</span><span>Phát âm, Ngữ pháp, Đọc hiểu</span></div>
+      </div>
+      <div class="cat-card-stats">
+        <div class="mini-stat"><span class="ms-num">${attemptsCount}</span><span class="ms-lbl">lượt thi</span></div>
+        <div class="mini-stat"><span class="ms-num">${avgScore}</span><span class="ms-lbl">điểm TB</span></div>
+        <div class="mini-stat"><span class="ms-num">${exam.duration}'</span><span class="ms-lbl">thời lượng</span></div>
+      </div>
+      <button class="start-exam-btn ${isCustom ? '' : id > 1 ? 'secondary' : ''}" onclick="startExam('${id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+        Bắt đầu thi ngay
+      </button>
+    `;
+    grid.appendChild(card);
+  });
+}
+
 // ── Init ─────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => showToast('Chào mừng! Chọn đề thi để bắt đầu ôn luyện 📚', 'info'), 600);
+  // 1. Merge custom exams from localStorage
+  try {
+    const stored = localStorage.getItem('smartexam_custom_exams');
+    if (stored && window.EXAM_DATABASE) {
+      const custom = JSON.parse(stored);
+      Object.assign(window.EXAM_DATABASE, custom);
+    }
+  } catch (e) {
+    console.error('Lỗi khi tải đề thi tự tạo:', e);
+  }
+
+  // 2. Render exam list dynamically
+  renderExamCatalogue();
+
+  // 3. Check query parameter auto-start
+  const urlParams = new URLSearchParams(window.location.search);
+  const examId = urlParams.get('id');
+  if (examId && window.EXAM_DATABASE && window.EXAM_DATABASE[examId]) {
+    setTimeout(() => {
+      startExam(examId);
+    }, 800);
+  } else {
+    setTimeout(() => showToast('Chào mừng con! Chọn đề thi dưới đây để bắt đầu ôn luyện nhé 📚', 'info'), 600);
+  }
 });
